@@ -1,3 +1,3 @@
-# Vineyard Blockchain
+# Vineyard Currency
 
-Normalizes management of different blockchains
+Currency management and conversion library
