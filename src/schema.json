@@ -1,5 +1,62 @@
 {
   "RateSource": {
-
+    "properties": {
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  "Rate": {
+    "properties": {
+      "to": {
+        "type": "uuid"
+      },
+      "from": {
+        "type": "uuid"
+      },
+      "value": {
+        "type": "colossal"
+      },
+      "inputs": {
+        "type": "list",
+        "trellis": "InputRate"
+      }
+    }
+  },
+  "InputRate": {
+    "properties": {
+      "source": {
+        "type": "RateSource"
+      },
+      "to": {
+        "type": "uuid"
+      },
+      "from": {
+        "type": "uuid"
+      },
+      "value": {
+        "type": "colossal"
+      },
+      "outputs": {
+        "type": "list",
+        "trellis": "Rate"
+      }
+    }
+  },
+  "Conversion": {
+    "properties": {
+      "source": {
+        "type": "uuid"
+      },
+      "input": {
+        "type": "colossal"
+      },
+      "rate": {
+        "type": "Rate"
+      },
+      "output": {
+        "type": "colossal"
+      }
+    }
   }
 }
