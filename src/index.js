@@ -4,4 +4,5 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./schema"));
+__export(require("./currency-manager"));
 //# sourceMappingURL=index.js.map
