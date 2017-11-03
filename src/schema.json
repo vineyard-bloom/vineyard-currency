@@ -39,7 +39,7 @@
       },
       "outputs": {
         "type": "list",
-        "trellis": "CurrencyRate"
+        "trellis": "AggregateRate"
       }
     }
   },
