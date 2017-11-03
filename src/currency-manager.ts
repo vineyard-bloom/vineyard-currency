@@ -1,9 +1,12 @@
 import {BigNumber} from 'bignumber.js'
-import {CurrencyId, CurrencyModel, GenericConversion, NewGenericConversion, Rate, RateSource} from "./types";
+import {
+  AggregateRate,
+  CurrencyId, CurrencyModel, GenericConversion, NewAggregateRate, NewGenericConversion, Rate, RateSource
+} from "./types";
 
 function createRateSql(filter: string = '') {
   return `
-    SELECT * FROM currency_rates 
+    SELECT * FROM aggregate_rates 
     WHERE from = :from AND to = :to ${filter}
     ORDER BY created DESC LIMIT 1
     `
@@ -38,6 +41,10 @@ export class CurrencyManager<ConversionSource = any> {
       from: from,
       to: to,
     })
+  }
+
+  async createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate> {
+    return await this.model.AggregateRate.create(newRate)
   }
 
   async getCurrentRate(from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {

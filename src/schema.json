@@ -6,7 +6,7 @@
       }
     }
   },
-  "CurrencyRate": {
+  "AggregateRate": {
     "properties": {
       "to": {
         "type": "uuid"
