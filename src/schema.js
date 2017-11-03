@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function getFullSchema() {
+function getFullCurrencySchema() {
     return require('./schema.json');
 }
-exports.getFullSchema = getFullSchema;
+exports.getFullCurrencySchema = getFullCurrencySchema;
 //# sourceMappingURL=schema.js.map

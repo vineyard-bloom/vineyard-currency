@@ -41,7 +41,7 @@ function createRateSql(filter) {
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = (function () {
+var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(sources) {
         this.sources = sources;
     }

@@ -5,4 +5,4 @@ export interface Trellis {
 export interface FullSchema {
     Transaction: Trellis;
 }
-export declare function getFullSchema(): FullSchema;
+export declare function getFullCurrencySchema(): FullSchema;
