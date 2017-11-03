@@ -3,6 +3,7 @@ import { Currency } from 'vineyard-blockchain';
 import { Collection, Modeler } from "vineyard-ground";
 export declare type Id = string;
 export declare type Identity<T> = Id;
+export declare type CurrencyId = string;
 export interface HasId {
     id: string;
 }
@@ -31,11 +32,15 @@ export interface RateSourceRate {
 export interface RateSource extends RateSourceEntity {
     getRate(to: string, from: string): Promise<Rate>;
 }
-export interface GenericConversion<ConversionSource> {
+export interface NewGenericConversion<ConversionSource> {
     source: ConversionSource;
     input: BigNumber;
     rate: BigNumber;
     output: BigNumber;
+}
+export interface GenericConversion<ConversionSource> {
+    id: string;
+    created: Date;
 }
 export interface CurrencyModel<ConversionSource = any> {
     Conversion: Collection<GenericConversion<ConversionSource>>;

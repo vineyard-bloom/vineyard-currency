@@ -6,7 +6,7 @@
       }
     }
   },
-  "Rate": {
+  "CurrencyRate": {
     "properties": {
       "to": {
         "type": "uuid"
@@ -39,7 +39,7 @@
       },
       "outputs": {
         "type": "list",
-        "trellis": "Rate"
+        "trellis": "CurrencyRate"
       }
     }
   },

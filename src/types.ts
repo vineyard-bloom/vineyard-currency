@@ -6,6 +6,8 @@ export type Id = string
 
 export type Identity<T> = Id
 
+export type CurrencyId = string
+
 export interface HasId {
   id: string
 }
@@ -43,11 +45,16 @@ export interface RateSource extends RateSourceEntity {
   getRate(to: string, from: string): Promise<Rate>
 }
 
-export interface GenericConversion<ConversionSource> {
+export interface NewGenericConversion<ConversionSource> {
   source: ConversionSource
   input: BigNumber
   rate: BigNumber
   output: BigNumber
+}
+
+export interface GenericConversion<ConversionSource> {
+  id: string
+  created: Date
 }
 
 export interface CurrencyModel<ConversionSource = any> {
