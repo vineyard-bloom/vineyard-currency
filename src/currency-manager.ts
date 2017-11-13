@@ -1,7 +1,8 @@
 import {BigNumber} from 'bignumber.js'
 import {
   AggregateRate,
-  CurrencyId, CurrencyModel, GenericConversion, NewAggregateRate, NewGenericConversion, Rate, RateSource
+  CurrencyId, CurrencyModel, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate,
+  RateSource
 } from "./types";
 
 function createRateSql(filter: string = '') {
@@ -15,24 +16,50 @@ function createRateSql(filter: string = '') {
 const rateAtTimeSql = createRateSql('AND created < :time')
 const currentRateSql = createRateSql()
 
+export type Aggregator = (rates: Rate[]) => Promise<NewAggregateRate>
+
+export interface RateFlow {
+  from: string
+  to: string
+  sources: RateSource[]
+  aggregator: Aggregator
+}
+
 export class CurrencyManager<ConversionSource = any> {
   private model: CurrencyModel<ConversionSource>
-  private sources: RateSource[]
+  private flows: RateFlow[]
 
-  constructor(sources: RateSource[]) {
-    this.sources = sources
+  constructor(flows: RateFlow[]) {
+    this.flows = flows
   }
 
-  async gatherData(to: CurrencyId, from: CurrencyId): Promise<Rate[]> {
-    const result: Rate[] = []
-    for (let source of this.sources) {
-      result.push(await source.getRate(to, from))
+  getFlow(to: string, from: string): RateFlow | undefined {
+    return this.flows.filter(f => f.to == to && f.from == from)[0]
+  }
+
+  private async gatherRates(sources: RateSource[]): Promise<InputRate[]> {
+    const newRates: NewInputRate[] = []
+    for (let source of sources) {
+      newRates.push(await source.getRate())
+    }
+
+    const result: InputRate[] = []
+    for (let rate of newRates) {
+      result.push(await this.createInputRate(rate))
     }
     return result
   }
 
-  async update(to: CurrencyId, from: CurrencyId) {
-    const data = await this.gatherData(to, from)
+  async updateFlow(flow: RateFlow): Promise<AggregateRate> {
+    const rates = await this.gatherRates(flow.sources)
+    const newRate = await flow.aggregator(rates)
+    return this.createAggregateRate(newRate)
+  }
+
+  async updateAll() {
+    for (let flow of this.flows) {
+      await this.updateFlow(flow)
+    }
   }
 
   async getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
@@ -41,6 +68,10 @@ export class CurrencyManager<ConversionSource = any> {
       from: from,
       to: to,
     })
+  }
+
+  async createInputRate(newRate: NewInputRate): Promise<InputRate> {
+    return await this.model.InputRate.create(newRate)
   }
 
   async createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate> {

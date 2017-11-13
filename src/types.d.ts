@@ -23,8 +23,8 @@ export interface Rate extends NewRate {
 export interface HasSource {
     source: Identity<RateSourceEntity>;
 }
-export declare type NewSingleSourceRate = NewRate & HasSource;
-export declare type SingleSourceRate = Rate & HasSource;
+export declare type NewInputRate = NewRate & HasSource;
+export declare type InputRate = Rate & HasSource;
 export interface RateSourceRate {
     target: Identity<Rate>;
     source: Identity<RateSourceEntity>;
@@ -36,7 +36,7 @@ export interface AggregateRate extends NewRate {
     inputs: Identity<RateSourceEntity>[];
 }
 export interface RateSource extends RateSourceEntity {
-    getRate(to: string, from: string): Promise<Rate>;
+    getRate(): Promise<NewInputRate>;
 }
 export interface NewGenericConversion<ConversionSource> {
     source: ConversionSource;
@@ -50,7 +50,7 @@ export interface GenericConversion<ConversionSource> {
 }
 export interface CurrencyModel<ConversionSource = any> {
     Conversion: Collection<GenericConversion<ConversionSource>>;
-    InputRate: Collection<SingleSourceRate>;
+    InputRate: Collection<InputRate>;
     AggregateRate: Collection<AggregateRate>;
     RateSource: Collection<RateSourceEntity>;
     ground: Modeler;

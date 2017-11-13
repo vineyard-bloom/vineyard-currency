@@ -42,43 +42,87 @@ function createRateSql(filter) {
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
 var CurrencyManager = (function () {
-    function CurrencyManager(sources) {
-        this.sources = sources;
+    function CurrencyManager(flows) {
+        this.flows = flows;
     }
-    CurrencyManager.prototype.gatherData = function (to, from) {
+    CurrencyManager.prototype.getFlow = function (to, from) {
+        return this.flows.filter(function (f) { return f.to == to && f.from == from; })[0];
+    };
+    CurrencyManager.prototype.gatherRates = function (sources) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, _i, _a, source, _b, _c;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var newRates, _i, sources_1, source, _a, _b, result, _c, newRates_1, rate, _d, _e;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
-                        result = [];
-                        _i = 0, _a = this.sources;
-                        _d.label = 1;
+                        newRates = [];
+                        _i = 0, sources_1 = sources;
+                        _f.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3 /*break*/, 4];
-                        source = _a[_i];
-                        _c = (_b = result).push;
-                        return [4 /*yield*/, source.getRate(to, from)];
+                        if (!(_i < sources_1.length)) return [3 /*break*/, 4];
+                        source = sources_1[_i];
+                        _b = (_a = newRates).push;
+                        return [4 /*yield*/, source.getRate()];
                     case 2:
-                        _c.apply(_b, [_d.sent()]);
-                        _d.label = 3;
+                        _b.apply(_a, [_f.sent()]);
+                        _f.label = 3;
                     case 3:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, result];
+                    case 4:
+                        result = [];
+                        _c = 0, newRates_1 = newRates;
+                        _f.label = 5;
+                    case 5:
+                        if (!(_c < newRates_1.length)) return [3 /*break*/, 8];
+                        rate = newRates_1[_c];
+                        _e = (_d = result).push;
+                        return [4 /*yield*/, this.createInputRate(rate)];
+                    case 6:
+                        _e.apply(_d, [_f.sent()]);
+                        _f.label = 7;
+                    case 7:
+                        _c++;
+                        return [3 /*break*/, 5];
+                    case 8: return [2 /*return*/, result];
                 }
             });
         });
     };
-    CurrencyManager.prototype.update = function (to, from) {
+    CurrencyManager.prototype.updateFlow = function (flow) {
         return __awaiter(this, void 0, void 0, function () {
-            var data;
+            var rates, newRate;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.gatherData(to, from)];
+                    case 0: return [4 /*yield*/, this.gatherRates(flow.sources)];
                     case 1:
-                        data = _a.sent();
-                        return [2 /*return*/];
+                        rates = _a.sent();
+                        return [4 /*yield*/, flow.aggregator(rates)];
+                    case 2:
+                        newRate = _a.sent();
+                        return [2 /*return*/, this.createAggregateRate(newRate)];
+                }
+            });
+        });
+    };
+    CurrencyManager.prototype.updateAll = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _i, _a, flow;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _i = 0, _a = this.flows;
+                        _b.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 4];
+                        flow = _a[_i];
+                        return [4 /*yield*/, this.updateFlow(flow)];
+                    case 2:
+                        _b.sent();
+                        _b.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -92,6 +136,16 @@ var CurrencyManager = (function () {
                             from: from,
                             to: to,
                         })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    CurrencyManager.prototype.createInputRate = function (newRate) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.model.InputRate.create(newRate)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
