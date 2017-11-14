@@ -40,6 +40,9 @@
       "outputs": {
         "type": "list",
         "trellis": "AggregateRate"
+      },
+      "success": {
+        "type": "boolean"
       }
     }
   },
