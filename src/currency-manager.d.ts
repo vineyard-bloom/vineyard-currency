@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { AggregateRate, CurrencyId, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate, RateSource } from "./types";
-export declare type Aggregator = (rates: Rate[]) => Promise<NewAggregateRate>;
+export declare type Aggregator = (rates: Rate[]) => Promise<BigNumber>;
 export interface RateFlow {
     from: string;
     to: string;
@@ -12,7 +12,7 @@ export declare class CurrencyManager<ConversionSource = any> {
     private flows;
     constructor(flows: RateFlow[]);
     getFlow(to: string, from: string): RateFlow | undefined;
-    private gatherRates(sources);
+    private gatherRates(to, from, sources);
     updateFlow(flow: RateFlow): Promise<AggregateRate>;
     updateAll(): Promise<void>;
     getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined>;

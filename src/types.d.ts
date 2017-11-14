@@ -20,11 +20,12 @@ export interface Rate extends NewRate {
     id: Id;
     created: Date;
 }
-export interface HasSource {
+export interface AdditionalInputFields {
     source: Identity<RateSourceEntity>;
+    success: boolean;
 }
-export declare type NewInputRate = NewRate & HasSource;
-export declare type InputRate = Rate & HasSource;
+export declare type NewInputRate = NewRate & AdditionalInputFields;
+export declare type InputRate = Rate & AdditionalInputFields;
 export interface RateSourceRate {
     target: Identity<Rate>;
     source: Identity<RateSourceEntity>;
@@ -35,8 +36,12 @@ export interface NewAggregateRate extends NewRate {
 export interface AggregateRate extends NewRate {
     inputs: Identity<RateSourceEntity>[];
 }
+export interface RateSourceOutput {
+    value: BigNumber;
+}
 export interface RateSource extends RateSourceEntity {
-    getRate(): Promise<NewInputRate>;
+    readonly id: string;
+    getRate(): Promise<RateSourceOutput>;
 }
 export interface NewGenericConversion<ConversionSource> {
     source: ConversionSource;

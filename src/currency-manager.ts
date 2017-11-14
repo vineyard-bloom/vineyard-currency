@@ -16,7 +16,7 @@ function createRateSql(filter: string = '') {
 const rateAtTimeSql = createRateSql('AND created < :time')
 const currentRateSql = createRateSql()
 
-export type Aggregator = (rates: Rate[]) => Promise<NewAggregateRate>
+export type Aggregator = (rates: Rate[]) => Promise<BigNumber>
 
 export interface RateFlow {
   from: string
@@ -37,10 +37,28 @@ export class CurrencyManager<ConversionSource = any> {
     return this.flows.filter(f => f.to == to && f.from == from)[0]
   }
 
-  private async gatherRates(sources: RateSource[]): Promise<InputRate[]> {
+  private async gatherRates(to: string, from: string, sources: RateSource[]): Promise<InputRate[]> {
     const newRates: NewInputRate[] = []
     for (let source of sources) {
-      newRates.push(await source.getRate())
+      try {
+        const output = await source.getRate()
+        newRates.push({
+          to: to,
+          from: from,
+          success: true,
+          source: source.id,
+          value: output.value
+        })
+      }
+      catch (error) {
+        await this.createInputRate({
+          to: to,
+          from: from,
+          success: false,
+          source: source.id,
+          value: new BigNumber(0)
+        })
+      }
     }
 
     const result: InputRate[] = []
@@ -51,8 +69,14 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async updateFlow(flow: RateFlow): Promise<AggregateRate> {
-    const rates = await this.gatherRates(flow.sources)
-    const newRate = await flow.aggregator(rates)
+    const rates = await this.gatherRates(flow.to, flow.from, flow.sources)
+    const value = await flow.aggregator(rates)
+    const newRate = {
+      value: value,
+      from: flow.from,
+      to: flow.to,
+      inputs: rates.map(r => r.source)
+    }
     return this.createAggregateRate(newRate)
   }
 
