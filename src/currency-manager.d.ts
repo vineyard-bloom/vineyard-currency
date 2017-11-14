@@ -1,6 +1,10 @@
 import { BigNumber } from 'bignumber.js';
 import { AggregateRate, CurrencyId, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate, RateSource } from "./types";
-export declare type Aggregator = (rates: Rate[]) => Promise<BigNumber>;
+export interface AggregatorResult {
+    value: BigNumber;
+    success: boolean;
+}
+export declare type Aggregator = (rates: Rate[]) => Promise<AggregatorResult>;
 export interface RateFlow {
     from: string;
     to: string;

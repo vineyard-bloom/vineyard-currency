@@ -112,7 +112,7 @@ var CurrencyManager = (function () {
     };
     CurrencyManager.prototype.updateFlow = function (flow) {
         return __awaiter(this, void 0, void 0, function () {
-            var rates, value, newRate;
+            var rates, result, newRate;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.gatherRates(flow.to, flow.from, flow.sources)];
@@ -120,9 +120,9 @@ var CurrencyManager = (function () {
                         rates = _a.sent();
                         return [4 /*yield*/, flow.aggregator(rates)];
                     case 2:
-                        value = _a.sent();
+                        result = _a.sent();
                         newRate = {
-                            value: value,
+                            value: result.value,
                             from: flow.from,
                             to: flow.to,
                             inputs: rates.map(function (r) { return r.source; })
