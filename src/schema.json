@@ -42,7 +42,7 @@
         "trellis": "AggregateRate"
       },
       "success": {
-        "type": "boolean"
+        "type": "bool"
       }
     }
   },
