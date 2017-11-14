@@ -1,6 +1,6 @@
 {
   "name": "vineyard-currency",
-  "version": "1.0.0-beta.9",
+  "version": "1.0.0-beta.10",
   "description": "Currency management and conversion",
   "main": "source/index.js",
   "types": "source/index.d.ts",
