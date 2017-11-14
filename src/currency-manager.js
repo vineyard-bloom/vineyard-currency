@@ -45,6 +45,7 @@ var currentRateSql = createRateSql();
 var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
+        this.model = model;
     }
     CurrencyManager.prototype.getFlow = function (to, from) {
         return this.flows.filter(function (f) { return f.to == to && f.from == from; })[0];

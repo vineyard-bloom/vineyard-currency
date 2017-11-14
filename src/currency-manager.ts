@@ -36,6 +36,7 @@ export class CurrencyManager<ConversionSource = any> {
 
   constructor(flows: RateFlow[], model: CurrencyModel<ConversionSource>) {
     this.flows = flows
+    this.model = model
   }
 
   getFlow(to: string, from: string): RateFlow | undefined {
