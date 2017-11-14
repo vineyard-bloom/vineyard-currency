@@ -34,7 +34,7 @@ export class CurrencyManager<ConversionSource = any> {
   private model: CurrencyModel<ConversionSource>
   private flows: RateFlow[]
 
-  constructor(flows: RateFlow[]) {
+  constructor(flows: RateFlow[], model: CurrencyModel<ConversionSource>) {
     this.flows = flows
   }
 

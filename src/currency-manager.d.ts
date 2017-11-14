@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { AggregateRate, CurrencyId, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate, RateSource } from "./types";
+import { AggregateRate, CurrencyId, CurrencyModel, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate, RateSource } from "./types";
 export interface AggregatorResult {
     value: BigNumber;
     success: boolean;
@@ -14,7 +14,7 @@ export interface RateFlow {
 export declare class CurrencyManager<ConversionSource = any> {
     private model;
     private flows;
-    constructor(flows: RateFlow[]);
+    constructor(flows: RateFlow[], model: CurrencyModel<ConversionSource>);
     getFlow(to: string, from: string): RateFlow | undefined;
     private gatherRates(to, from, sources);
     updateFlow(flow: RateFlow): Promise<AggregateRate>;
