@@ -6,7 +6,7 @@ export type Id = string
 
 export type Identity<T> = Id
 
-export type CurrencyId = string
+export type CurrencyId = number
 
 export interface HasId {
   id: string
@@ -18,8 +18,8 @@ export interface RateSourceEntity {
 }
 
 export interface NewRate {
-  to: Identity<Currency>
-  from: Identity<Currency>
+  to: CurrencyId
+  from: CurrencyId
   value: BigNumber
 }
 
@@ -30,7 +30,6 @@ export interface Rate extends NewRate {
 
 export interface AdditionalInputFields {
   source: Identity<RateSourceEntity>
-  success: boolean
 }
 
 export type NewInputRate = NewRate & AdditionalInputFields
@@ -60,20 +59,20 @@ export interface RateSource extends RateSourceEntity {
   getRate(): Promise<RateSourceOutput>
 }
 
-export interface NewGenericConversion<ConversionSource> {
-  source: ConversionSource
+export interface NewGenericConversion {
+  context: string // The uuid of the entity whose fields are being converted.
   input: BigNumber
   rate: BigNumber
   output: BigNumber
 }
 
-export interface GenericConversion<ConversionSource> {
+export interface GenericConversion {
   id: string
   created: Date
 }
 
-export interface CurrencyModel<ConversionSource = any> {
-  Conversion: Collection<GenericConversion<ConversionSource>>
+export interface CurrencyModel {
+  Conversion: Collection<GenericConversion>
   InputRate: Collection<InputRate>
   AggregateRate: Collection<AggregateRate>
   RateSource: Collection<RateSourceEntity>

@@ -35,14 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var bignumber_js_1 = require("bignumber.js");
 function createRateSql(filter) {
     if (filter === void 0) { filter = ''; }
     return "\n    SELECT * FROM aggregate_rates \n    WHERE from = :from AND to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = /** @class */ (function () {
+var CurrencyManager = (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
@@ -60,53 +59,44 @@ var CurrencyManager = /** @class */ (function () {
                         _i = 0, sources_1 = sources;
                         _d.label = 1;
                     case 1:
-                        if (!(_i < sources_1.length)) return [3 /*break*/, 7];
+                        if (!(_i < sources_1.length)) return [3 /*break*/, 6];
                         source = sources_1[_i];
                         _d.label = 2;
                     case 2:
-                        _d.trys.push([2, 4, , 6]);
+                        _d.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, source.getRate()];
                     case 3:
                         output = _d.sent();
                         newRates.push({
                             to: to,
                             from: from,
-                            success: true,
                             source: source.id,
                             value: output.value
                         });
-                        return [3 /*break*/, 6];
+                        return [3 /*break*/, 5];
                     case 4:
                         error_1 = _d.sent();
-                        return [4 /*yield*/, this.createInputRate({
-                                to: to,
-                                from: from,
-                                success: false,
-                                source: source.id,
-                                value: new bignumber_js_1.BigNumber(0)
-                            })];
+                        console.error("Error gathering rate from", source.name, to, '->', from, error_1);
+                        return [3 /*break*/, 5];
                     case 5:
-                        _d.sent();
-                        return [3 /*break*/, 6];
-                    case 6:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 7:
+                    case 6:
                         result = [];
                         _a = 0, newRates_1 = newRates;
-                        _d.label = 8;
-                    case 8:
-                        if (!(_a < newRates_1.length)) return [3 /*break*/, 11];
+                        _d.label = 7;
+                    case 7:
+                        if (!(_a < newRates_1.length)) return [3 /*break*/, 10];
                         rate = newRates_1[_a];
                         _c = (_b = result).push;
                         return [4 /*yield*/, this.createInputRate(rate)];
-                    case 9:
+                    case 8:
                         _c.apply(_b, [_d.sent()]);
-                        _d.label = 10;
-                    case 10:
+                        _d.label = 9;
+                    case 9:
                         _a++;
-                        return [3 /*break*/, 8];
-                    case 11: return [2 /*return*/, result];
+                        return [3 /*break*/, 7];
+                    case 10: return [2 /*return*/, result];
                 }
             });
         });
@@ -213,7 +203,7 @@ var CurrencyManager = /** @class */ (function () {
             });
         });
     };
-    CurrencyManager.prototype.convert = function (value, from, to, time, source) {
+    CurrencyManager.prototype.convert = function (value, from, to, time, context) {
         return __awaiter(this, void 0, void 0, function () {
             var rate, newValue;
             return __generator(this, function (_a) {
@@ -225,7 +215,7 @@ var CurrencyManager = /** @class */ (function () {
                             throw new Error("There is no rate data to convert from " + from + " to " + to + ".");
                         newValue = value.times(rate.value);
                         return [4 /*yield*/, this.createConversion({
-                                source: source,
+                                context: context,
                                 input: value,
                                 rate: rate.value,
                                 output: newValue,

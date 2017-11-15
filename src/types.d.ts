@@ -1,9 +1,8 @@
 import { BigNumber } from 'bignumber.js';
-import { Currency } from 'vineyard-blockchain';
 import { Collection, Modeler } from "vineyard-ground";
 export declare type Id = string;
 export declare type Identity<T> = Id;
-export declare type CurrencyId = string;
+export declare type CurrencyId = number;
 export interface HasId {
     id: string;
 }
@@ -12,8 +11,8 @@ export interface RateSourceEntity {
     name: string;
 }
 export interface NewRate {
-    to: Identity<Currency>;
-    from: Identity<Currency>;
+    to: CurrencyId;
+    from: CurrencyId;
     value: BigNumber;
 }
 export interface Rate extends NewRate {
@@ -22,7 +21,6 @@ export interface Rate extends NewRate {
 }
 export interface AdditionalInputFields {
     source: Identity<RateSourceEntity>;
-    success: boolean;
 }
 export declare type NewInputRate = NewRate & AdditionalInputFields;
 export declare type InputRate = Rate & AdditionalInputFields;
@@ -43,18 +41,18 @@ export interface RateSource extends RateSourceEntity {
     readonly id: string;
     getRate(): Promise<RateSourceOutput>;
 }
-export interface NewGenericConversion<ConversionSource> {
-    source: ConversionSource;
+export interface NewGenericConversion {
+    context: string;
     input: BigNumber;
     rate: BigNumber;
     output: BigNumber;
 }
-export interface GenericConversion<ConversionSource> {
+export interface GenericConversion {
     id: string;
     created: Date;
 }
-export interface CurrencyModel<ConversionSource = any> {
-    Conversion: Collection<GenericConversion<ConversionSource>>;
+export interface CurrencyModel {
+    Conversion: Collection<GenericConversion>;
     InputRate: Collection<InputRate>;
     AggregateRate: Collection<AggregateRate>;
     RateSource: Collection<RateSourceEntity>;

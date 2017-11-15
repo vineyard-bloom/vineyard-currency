@@ -9,10 +9,10 @@
   "AggregateRate": {
     "properties": {
       "to": {
-        "type": "uuid"
+        "type": "int"
       },
       "from": {
-        "type": "uuid"
+        "type": "int"
       },
       "value": {
         "type": "colossal"
@@ -29,10 +29,10 @@
         "type": "RateSource"
       },
       "to": {
-        "type": "uuid"
+        "type": "int"
       },
       "from": {
-        "type": "uuid"
+        "type": "int"
       },
       "value": {
         "type": "colossal"
@@ -40,9 +40,6 @@
       "outputs": {
         "type": "list",
         "trellis": "AggregateRate"
-      },
-      "success": {
-        "type": "bool"
       }
     }
   },

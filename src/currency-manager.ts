@@ -24,26 +24,26 @@ export interface AggregatorResult {
 export type Aggregator = (rates: Rate[]) => Promise<AggregatorResult>
 
 export interface RateFlow {
-  from: string
-  to: string
+  from: CurrencyId
+  to: CurrencyId
   sources: RateSource[]
   aggregator: Aggregator
 }
 
 export class CurrencyManager<ConversionSource = any> {
-  private model: CurrencyModel<ConversionSource>
+  private model: CurrencyModel
   private flows: RateFlow[]
 
-  constructor(flows: RateFlow[], model: CurrencyModel<ConversionSource>) {
+  constructor(flows: RateFlow[], model: CurrencyModel) {
     this.flows = flows
     this.model = model
   }
 
-  getFlow(to: string, from: string): RateFlow | undefined {
+  getFlow(to: CurrencyId, from: CurrencyId): RateFlow | undefined {
     return this.flows.filter(f => f.to == to && f.from == from)[0]
   }
 
-  private async gatherRates(to: string, from: string, sources: RateSource[]): Promise<InputRate[]> {
+  private async gatherRates(to: CurrencyId, from: CurrencyId, sources: RateSource[]): Promise<InputRate[]> {
     const newRates: NewInputRate[] = []
     for (let source of sources) {
       try {
@@ -51,19 +51,12 @@ export class CurrencyManager<ConversionSource = any> {
         newRates.push({
           to: to,
           from: from,
-          success: true,
           source: source.id,
           value: output.value
         })
       }
       catch (error) {
-        await this.createInputRate({
-          to: to,
-          from: from,
-          success: false,
-          source: source.id,
-          value: new BigNumber(0)
-        })
+        console.error("Error gathering rate from", source.name, to, '->', from, error)
       }
     }
 
@@ -115,18 +108,18 @@ export class CurrencyManager<ConversionSource = any> {
     })
   }
 
-  async createConversion<ConversionSource>(conversion: NewGenericConversion<ConversionSource>) {
+  async createConversion<ConversionSource>(conversion: NewGenericConversion) {
     return await this.model.Conversion.create(conversion)
   }
 
-  async convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, source: ConversionSource): Promise<GenericConversion<ConversionSource>> {
+  async convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
     const rate = await this.getCurrentRate(to, from)
     if (!rate)
       throw new Error("There is no rate data to convert from " + from + " to " + to + ".")
 
     const newValue = value.times(rate.value)
     return await this.createConversion({
-      source: source,
+      context: context,
       input: value,
       rate: rate.value,
       output: newValue,

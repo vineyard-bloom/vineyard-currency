@@ -6,16 +6,16 @@ export interface AggregatorResult {
 }
 export declare type Aggregator = (rates: Rate[]) => Promise<AggregatorResult>;
 export interface RateFlow {
-    from: string;
-    to: string;
+    from: CurrencyId;
+    to: CurrencyId;
     sources: RateSource[];
     aggregator: Aggregator;
 }
 export declare class CurrencyManager<ConversionSource = any> {
     private model;
     private flows;
-    constructor(flows: RateFlow[], model: CurrencyModel<ConversionSource>);
-    getFlow(to: string, from: string): RateFlow | undefined;
+    constructor(flows: RateFlow[], model: CurrencyModel);
+    getFlow(to: CurrencyId, from: CurrencyId): RateFlow | undefined;
     private gatherRates(to, from, sources);
     updateFlow(flow: RateFlow): Promise<AggregateRate>;
     updateAll(): Promise<void>;
@@ -23,6 +23,6 @@ export declare class CurrencyManager<ConversionSource = any> {
     createInputRate(newRate: NewInputRate): Promise<InputRate>;
     createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate>;
     getCurrentRate(from: CurrencyId, to: CurrencyId): Promise<Rate | undefined>;
-    createConversion<ConversionSource>(conversion: NewGenericConversion<ConversionSource>): Promise<GenericConversion<ConversionSource>>;
-    convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, source: ConversionSource): Promise<GenericConversion<ConversionSource>>;
+    createConversion<ConversionSource>(conversion: NewGenericConversion): Promise<GenericConversion>;
+    convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion>;
 }
