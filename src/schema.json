@@ -2,7 +2,7 @@
   "RateSource": {
     "properties": {
       "name": {
-        "type": "string"
+        "type": "int"
       }
     }
   },
@@ -46,7 +46,7 @@
   "Conversion": {
     "properties": {
       "source": {
-        "type": "uuid"
+        "type": "int"
       },
       "input": {
         "type": "colossal"

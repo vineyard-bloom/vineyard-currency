@@ -8,12 +8,14 @@ export type Identity<T> = Id
 
 export type CurrencyId = number
 
+export type RateSourceId = number
+
 export interface HasId {
   id: string
 }
 
 export interface RateSourceEntity {
-  id: Id
+  id: RateSourceId
   name: string
 }
 
@@ -29,7 +31,7 @@ export interface Rate extends NewRate {
 }
 
 export interface AdditionalInputFields {
-  source: Identity<RateSourceEntity>
+  source: RateSourceId
 }
 
 export type NewInputRate = NewRate & AdditionalInputFields
@@ -38,15 +40,15 @@ export type InputRate = Rate & AdditionalInputFields
 
 export interface RateSourceRate {
   target: Identity<Rate>
-  source: Identity<RateSourceEntity>
+  source: RateSourceId
 }
 
 export interface NewAggregateRate extends NewRate {
-  inputs: Identity<RateSourceEntity>[]
+  inputs: RateSourceId[]
 }
 
 export interface AggregateRate extends NewRate {
-  inputs: Identity<RateSourceEntity>[]
+  inputs: RateSourceId[]
 }
 
 export interface RateSourceOutput {
@@ -54,7 +56,7 @@ export interface RateSourceOutput {
 }
 
 export interface RateSource extends RateSourceEntity {
-  readonly id: string
+  readonly id: RateSourceId
 
   getRate(): Promise<RateSourceOutput>
 }
