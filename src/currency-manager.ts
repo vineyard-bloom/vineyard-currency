@@ -98,6 +98,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate> {
+    newRate.inputs = []
     return await this.model.AggregateRate.create(newRate)
   }
 
