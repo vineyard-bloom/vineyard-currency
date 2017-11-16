@@ -69,7 +69,7 @@ export interface NewGenericConversion {
   output: BigNumber
 }
 
-export interface GenericConversion {
+export interface GenericConversion extends NewGenericConversion {
   id: string
   created: Date
 }

@@ -49,7 +49,7 @@ export interface NewGenericConversion {
     rateValue: BigNumber;
     output: BigNumber;
 }
-export interface GenericConversion {
+export interface GenericConversion extends NewGenericConversion {
     id: string;
     created: Date;
 }
