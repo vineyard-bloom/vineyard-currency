@@ -8,7 +8,7 @@ import {
 function createRateSql(filter: string = '') {
   return `
     SELECT * FROM aggregate_rates 
-    WHERE from = :from AND to = :to ${filter}
+    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to ${filter}
     ORDER BY created DESC LIMIT 1
     `
 }
@@ -114,7 +114,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async convert(inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
-    const rate = await this.getRateAtTime(time, to, from)
+    const rate = await this.getRateAtTime(time, from, to)
     if (!rate)
       throw new Error("There is no rate data to convert from " + from + " to " + to + ".")
 
