@@ -24,5 +24,5 @@ export declare class CurrencyManager<ConversionSource = any> {
     createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate>;
     getCurrentRate(from: CurrencyId, to: CurrencyId): Promise<Rate | undefined>;
     createConversion<ConversionSource>(conversion: NewGenericConversion): Promise<GenericConversion>;
-    convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion>;
+    convert(inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion>;
 }

@@ -45,7 +45,7 @@ export interface RateSource extends RateSourceEntity {
 export interface NewGenericConversion {
     context: string;
     input: BigNumber;
-    rate: BigNumber;
+    rate: string;
     output: BigNumber;
 }
 export interface GenericConversion {

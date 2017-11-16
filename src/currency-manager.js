@@ -41,7 +41,7 @@ function createRateSql(filter) {
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = /** @class */ (function () {
+var CurrencyManager = (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
@@ -205,21 +205,21 @@ var CurrencyManager = /** @class */ (function () {
             });
         });
     };
-    CurrencyManager.prototype.convert = function (value, from, to, time, context) {
+    CurrencyManager.prototype.convert = function (inputValue, from, to, time, context) {
         return __awaiter(this, void 0, void 0, function () {
             var rate, newValue;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getCurrentRate(to, from)];
+                    case 0: return [4 /*yield*/, this.getRateAtTime(time, to, from)];
                     case 1:
                         rate = _a.sent();
                         if (!rate)
                             throw new Error("There is no rate data to convert from " + from + " to " + to + ".");
-                        newValue = value.times(rate.value);
+                        newValue = inputValue.times(rate.value);
                         return [4 /*yield*/, this.createConversion({
                                 context: context,
-                                input: value,
-                                rate: rate.value,
+                                input: inputValue,
+                                rate: rate.id,
                                 output: newValue,
                             })];
                     case 2: return [2 /*return*/, _a.sent()];

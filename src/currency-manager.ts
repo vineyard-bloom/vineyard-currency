@@ -113,16 +113,16 @@ export class CurrencyManager<ConversionSource = any> {
     return await this.model.Conversion.create(conversion)
   }
 
-  async convert(value: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
-    const rate = await this.getCurrentRate(to, from)
+  async convert(inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
+    const rate = await this.getRateAtTime(time, to, from)
     if (!rate)
       throw new Error("There is no rate data to convert from " + from + " to " + to + ".")
 
-    const newValue = value.times(rate.value)
+    const newValue = inputValue.times(rate.value)
     return await this.createConversion({
       context: context,
-      input: value,
-      rate: rate.value,
+      input: inputValue,
+      rate: rate.id,
       output: newValue,
     })
   }
