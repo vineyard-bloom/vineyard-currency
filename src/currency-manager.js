@@ -41,7 +41,7 @@ function createRateSql(filter) {
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = (function () {
+var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
@@ -220,6 +220,7 @@ var CurrencyManager = (function () {
                                 context: context,
                                 input: inputValue,
                                 rate: rate.id,
+                                rateValue: rate.value,
                                 output: newValue,
                             })];
                     case 2: return [2 /*return*/, _a.sent()];

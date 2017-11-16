@@ -123,6 +123,7 @@ export class CurrencyManager<ConversionSource = any> {
       context: context,
       input: inputValue,
       rate: rate.id,
+      rateValue: rate.value,
       output: newValue,
     })
   }
