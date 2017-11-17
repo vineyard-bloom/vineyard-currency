@@ -15,7 +15,7 @@
         "type": "int"
       },
       "value": {
-        "type": "colossal"
+        "type": "bignumber"
       },
       "inputs": {
         "type": "list",
@@ -49,20 +49,20 @@
         "type": "int"
       },
       "input": {
-        "type": "colossal"
+        "type": "bignumber"
       },
       "rate": {
         "type": "AggregateRate",
         "nullable": true
       },
       "output": {
-        "type": "colossal"
+        "type": "bignumber"
       },
       "context": {
-        "type": "string"
+        "type": "uuid"
       },
       "rateValue": {
-        "type": "colossal"
+        "type": "bignumber"
       }
     }
   }

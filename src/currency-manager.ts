@@ -14,7 +14,7 @@ function createRateSql(filter: string = '') {
     `
 }
 
-const rateAtTimeSql = createRateSql('AND created < :time')
+const rateAtTimeSql = createRateSql('AND created <= :time')
 const currentRateSql = createRateSql()
 
 export interface AggregatorResult {
@@ -92,7 +92,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
-    return await this.model.ground.querySingle(currentRateSql, {
+    return await this.model.ground.querySingle(rateAtTimeSql, {
       time: time.toISOString(),
       from: from,
       to: to,
