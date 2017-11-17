@@ -67,16 +67,21 @@ export class CurrencyManager<ConversionSource = any> {
     return result
   }
 
-  async updateFlow(flow: RateFlow): Promise<AggregateRate> {
+  async updateFlow(flow: RateFlow): Promise<AggregateRate | undefined> {
     const rates = await this.gatherRates(flow.to, flow.from, flow.sources)
     const result = await flow.aggregator(rates)
-    const newRate = {
-      value: result.value,
-      from: flow.from,
-      to: flow.to,
-      inputs: rates.map(r => r.source)
+    if (result.success) {
+      const newRate = {
+        value: result.value,
+        from: flow.from,
+        to: flow.to,
+        inputs: rates.map(r => r.source)
+      }
+      return this.createAggregateRate(newRate)
     }
-    return this.createAggregateRate(newRate)
+    else {
+      console.error('Error processing user-info')
+    }
   }
 
   async updateAll() {

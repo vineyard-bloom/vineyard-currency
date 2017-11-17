@@ -112,13 +112,19 @@ var CurrencyManager = (function () {
                         return [4 /*yield*/, flow.aggregator(rates)];
                     case 2:
                         result = _a.sent();
-                        newRate = {
-                            value: result.value,
-                            from: flow.from,
-                            to: flow.to,
-                            inputs: rates.map(function (r) { return r.source; })
-                        };
-                        return [2 /*return*/, this.createAggregateRate(newRate)];
+                        if (result.success) {
+                            newRate = {
+                                value: result.value,
+                                from: flow.from,
+                                to: flow.to,
+                                inputs: rates.map(function (r) { return r.source; })
+                            };
+                            return [2 /*return*/, this.createAggregateRate(newRate)];
+                        }
+                        else {
+                            console.error('Error processing user-info');
+                        }
+                        return [2 /*return*/];
                 }
             });
         });

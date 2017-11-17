@@ -17,7 +17,7 @@ export declare class CurrencyManager<ConversionSource = any> {
     constructor(flows: RateFlow[], model: CurrencyModel);
     getFlow(to: CurrencyId, from: CurrencyId): RateFlow | undefined;
     private gatherRates(to, from, sources);
-    updateFlow(flow: RateFlow): Promise<AggregateRate>;
+    updateFlow(flow: RateFlow): Promise<AggregateRate | undefined>;
     updateAll(): Promise<void>;
     getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined>;
     createInputRate(newRate: NewInputRate): Promise<InputRate>;
