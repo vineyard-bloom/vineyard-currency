@@ -6,6 +6,7 @@ import {
 } from "./types";
 
 function createRateSql(filter: string = '') {
+  console.error("Should not be used in production, filter needs to be fixed")
   return `
     SELECT * FROM aggregate_rates 
     WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to ${filter}
@@ -86,7 +87,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
-    return await this.model.ground.querySingle(rateAtTimeSql, {
+    return await this.model.ground.querySingle(currentRateSql, {
       time: time.toISOString(),
       from: from,
       to: to,

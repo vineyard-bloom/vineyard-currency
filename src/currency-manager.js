@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 function createRateSql(filter) {
     if (filter === void 0) { filter = ''; }
+    console.error("Should not be used in production, filter needs to be fixed");
     return "\n    SELECT * FROM aggregate_rates \n    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
@@ -150,7 +151,7 @@ var CurrencyManager = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.ground.querySingle(rateAtTimeSql, {
+                    case 0: return [4 /*yield*/, this.model.ground.querySingle(currentRateSql, {
                             time: time.toISOString(),
                             from: from,
                             to: to,
