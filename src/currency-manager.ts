@@ -6,9 +6,10 @@ import {
 } from "./types";
 
 function createRateSql(filter: string = '') {
+  console.error("Should not be used in production, filter needs to be fixed")
   return `
     SELECT * FROM aggregate_rates 
-    WHERE from = :from AND to = :to ${filter}
+    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to ${filter}
     ORDER BY created DESC LIMIT 1
     `
 }
@@ -91,7 +92,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
-    return await this.model.ground.querySingle(rateAtTimeSql, {
+    return await this.model.ground.querySingle(currentRateSql, {
       time: time.toISOString(),
       from: from,
       to: to,
@@ -119,7 +120,7 @@ export class CurrencyManager<ConversionSource = any> {
   }
 
   async convert(inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
-    const rate = await this.getRateAtTime(time, to, from)
+    const rate = await this.getRateAtTime(time, from, to)
     if (!rate)
       throw new Error("There is no rate data to convert from " + from + " to " + to + ".")
 
@@ -128,6 +129,7 @@ export class CurrencyManager<ConversionSource = any> {
       context: context,
       input: inputValue,
       rate: rate.id,
+      rateValue: rate.value,
       output: newValue,
     })
   }

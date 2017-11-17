@@ -37,11 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 function createRateSql(filter) {
     if (filter === void 0) { filter = ''; }
-    return "\n    SELECT * FROM aggregate_rates \n    WHERE from = :from AND to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
+    console.error("Should not be used in production, filter needs to be fixed");
+    return "\n    SELECT * FROM aggregate_rates \n    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
 }
 var rateAtTimeSql = createRateSql('AND created < :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = (function () {
+var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
@@ -156,7 +157,7 @@ var CurrencyManager = (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.ground.querySingle(rateAtTimeSql, {
+                    case 0: return [4 /*yield*/, this.model.ground.querySingle(currentRateSql, {
                             time: time.toISOString(),
                             from: from,
                             to: to,
@@ -216,7 +217,7 @@ var CurrencyManager = (function () {
             var rate, newValue;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getRateAtTime(time, to, from)];
+                    case 0: return [4 /*yield*/, this.getRateAtTime(time, from, to)];
                     case 1:
                         rate = _a.sent();
                         if (!rate)
@@ -226,6 +227,7 @@ var CurrencyManager = (function () {
                                 context: context,
                                 input: inputValue,
                                 rate: rate.id,
+                                rateValue: rate.value,
                                 output: newValue,
                             })];
                     case 2: return [2 /*return*/, _a.sent()];

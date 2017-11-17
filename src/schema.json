@@ -52,9 +52,16 @@
         "type": "colossal"
       },
       "rate": {
-        "type": "AggregateRate"
+        "type": "AggregateRate",
+        "nullable": true
       },
       "output": {
+        "type": "colossal"
+      },
+      "context": {
+        "type": "string"
+      },
+      "rateValue": {
         "type": "colossal"
       }
     }

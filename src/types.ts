@@ -64,11 +64,12 @@ export interface RateSource extends RateSourceEntity {
 export interface NewGenericConversion {
   context: string // The uuid of the entity whose fields are being converted.
   input: BigNumber
-  rate: string // InputRate or AggregateRate id
+  rate?: string // InputRate or AggregateRate id
+  rateValue: BigNumber
   output: BigNumber
 }
 
-export interface GenericConversion {
+export interface GenericConversion extends NewGenericConversion {
   id: string
   created: Date
 }
