@@ -40,7 +40,7 @@ export class CurrencyManager<ConversionSource = any> {
     this.model = model
   }
 
-  getFlow(to: CurrencyId, from: CurrencyId): RateFlow | undefined {
+  getFlow(from: CurrencyId, to: CurrencyId): RateFlow | undefined {
     return this.flows.filter(f => f.to == to && f.from == from)[0]
   }
 

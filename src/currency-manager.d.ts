@@ -15,7 +15,7 @@ export declare class CurrencyManager<ConversionSource = any> {
     private model;
     private flows;
     constructor(flows: RateFlow[], model: CurrencyModel);
-    getFlow(to: CurrencyId, from: CurrencyId): RateFlow | undefined;
+    getFlow(from: CurrencyId, to: CurrencyId): RateFlow | undefined;
     private gatherRates(to, from, sources);
     updateFlow(flow: RateFlow): Promise<AggregateRate | undefined>;
     updateAll(): Promise<void>;

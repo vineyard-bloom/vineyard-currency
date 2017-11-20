@@ -42,12 +42,12 @@ function createRateSql(filter) {
 }
 var rateAtTimeSql = createRateSql('AND created <= :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = (function () {
+var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
     }
-    CurrencyManager.prototype.getFlow = function (to, from) {
+    CurrencyManager.prototype.getFlow = function (from, to) {
         return this.flows.filter(function (f) { return f.to == to && f.from == from; })[0];
     };
     CurrencyManager.prototype.gatherRates = function (to, from, sources) {
