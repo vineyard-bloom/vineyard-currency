@@ -53,7 +53,8 @@ export class CurrencyManager<ConversionSource = any> {
           to: to,
           from: from,
           source: source.id,
-          value: output.value
+          value: output.value,
+          volume: output.volume
         })
       }
       catch (error) {
