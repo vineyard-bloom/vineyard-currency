@@ -23,6 +23,7 @@ export interface NewRate {
   to: CurrencyId
   from: CurrencyId
   value: BigNumber
+  volume: BigNumber
 }
 
 export interface Rate extends NewRate {
@@ -53,6 +54,7 @@ export interface AggregateRate extends NewRate {
 
 export interface RateSourceOutput {
   value: BigNumber
+  volume: BigNumber
 }
 
 export interface RateSource extends RateSourceEntity {
