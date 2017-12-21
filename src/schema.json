@@ -1,0 +1,77 @@
+{
+  "RateSource": {
+    "properties": {
+      "name": {
+        "type": "int"
+      }
+    }
+  },
+  "AggregateRate": {
+    "properties": {
+      "to": {
+        "type": "int"
+      },
+      "from": {
+        "type": "int"
+      },
+      "value": {
+        "type": "bignumber"
+      },
+      "volume": {
+        "type": "bignumber",
+        "nullable": true
+      },
+      "inputs": {
+        "type": "list",
+        "trellis": "InputRate"
+      }
+    }
+  },
+  "InputRate": {
+    "properties": {
+      "source": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      },
+      "from": {
+        "type": "int"
+      },
+      "value": {
+        "type": "bignumber"
+      },
+      "volume": {
+        "type": "bignumber",
+        "nullable": true
+      },
+      "outputs": {
+        "type": "list",
+        "trellis": "AggregateRate"
+      }
+    }
+  },
+  "Conversion": {
+    "properties": {
+      "source": {
+        "type": "int"
+      },
+      "input": {
+        "type": "bignumber"
+      },
+      "rate": {
+        "type": "AggregateRate",
+        "nullable": true
+      },
+      "output": {
+        "type": "bignumber"
+      },
+      "context": {
+        "type": "uuid"
+      },
+      "rateValue": {
+        "type": "bignumber"
+      }
+    }
+  }
+}

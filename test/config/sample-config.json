@@ -1,0 +1,12 @@
+{
+  "database": {
+    "host": "localhost",
+    "database": "vineyard_currency",
+    "username": "root",
+    "password": "",
+    "dialect": "postgres"
+  },
+  "api": {
+    "port":" 3000"
+  }
+}
