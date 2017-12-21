@@ -17,6 +17,10 @@
       "value": {
         "type": "bignumber"
       },
+      "volume": {
+        "type": "bignumber",
+        "nullable": true
+      },
       "inputs": {
         "type": "list",
         "trellis": "InputRate"
@@ -35,7 +39,11 @@
         "type": "int"
       },
       "value": {
-        "type": "colossal"
+        "type": "bignumber"
+      },
+      "volume": {
+        "type": "bignumber",
+        "nullable": true
       },
       "outputs": {
         "type": "list",
