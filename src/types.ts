@@ -1,6 +1,6 @@
-import {BigNumber} from 'bignumber.js'
-import {Currency} from 'vineyard-blockchain'
-import {Collection, Modeler} from "vineyard-ground"
+import { BigNumber } from 'bignumber.js'
+import { Currency } from 'vineyard-blockchain'
+import { Collection, Modeler } from 'vineyard-ground'
 
 export type Id = string
 
@@ -60,7 +60,7 @@ export interface RateSourceOutput {
 export interface RateSource extends RateSourceEntity {
   readonly id: RateSourceId
 
-  getRate(): Promise<RateSourceOutput>
+  getRate (): Promise<RateSourceOutput>
 }
 
 export interface NewGenericConversion {

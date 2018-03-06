@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { Collection, Modeler } from "vineyard-ground";
+import { Collection, Modeler } from 'vineyard-ground';
 export declare type Id = string;
 export declare type Identity<T> = Id;
 export declare type CurrencyId = number;
