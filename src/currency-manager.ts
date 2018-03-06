@@ -1,14 +1,14 @@
-import {BigNumber} from 'bignumber.js'
+import { BigNumber } from 'bignumber.js'
 import {
   AggregateRate,
   CurrencyId, CurrencyModel, GenericConversion, InputRate, NewAggregateRate, NewGenericConversion, NewInputRate, Rate,
   RateSource
-} from "./types";
+} from './types'
 
-function createRateSql(filter: string = '') {
-  console.error("Should not be used in production, filter needs to be fixed")
+function createRateSql (filter: string = '') {
+  console.error('Should not be used in production, filter needs to be fixed')
   return `
-    SELECT * FROM aggregate_rates 
+    SELECT * FROM aggregate_rates
     WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to ${filter}
     ORDER BY created DESC LIMIT 1
     `
@@ -19,6 +19,7 @@ const currentRateSql = createRateSql()
 
 export interface AggregatorResult {
   value: BigNumber
+  volume: BigNumber
   success: boolean
 }
 
@@ -35,16 +36,83 @@ export class CurrencyManager<ConversionSource = any> {
   private model: CurrencyModel
   private flows: RateFlow[]
 
-  constructor(flows: RateFlow[], model: CurrencyModel) {
+  constructor (flows: RateFlow[], model: CurrencyModel) {
     this.flows = flows
     this.model = model
   }
 
-  getFlow(from: CurrencyId, to: CurrencyId): RateFlow | undefined {
-    return this.flows.filter(f => f.to == to && f.from == from)[0]
+  getFlow (from: CurrencyId, to: CurrencyId): RateFlow | undefined {
+    return this.flows.filter(f => f.to === to && f.from === from)[0]
   }
 
-  private async gatherRates(to: CurrencyId, from: CurrencyId, sources: RateSource[]): Promise<InputRate[]> {
+  async updateFlow (flow: RateFlow): Promise<AggregateRate | undefined> {
+    const rates = await this.gatherRates(flow.to, flow.from, flow.sources)
+    const result = await flow.aggregator(rates)
+    if (result.success) {
+      const newRate = {
+        value: result.value,
+        volume: result.volume,
+        from: flow.from,
+        to: flow.to,
+        inputs: rates.map(r => r.source)
+      }
+      return this.createAggregateRate(newRate)
+    } else {
+      console.error('Error processing user-info')
+    }
+  }
+
+  async updateAll () {
+    for (let flow of this.flows) {
+      await this.updateFlow(flow)
+    }
+  }
+
+  async getRateAtTime (time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
+    return this.model.ground.querySingle(rateAtTimeSql, {
+      time: time.toISOString(),
+      from: from,
+      to: to
+    })
+  }
+
+  async createInputRate (newRate: NewInputRate): Promise<InputRate> {
+    return this.model.InputRate.create(newRate)
+  }
+
+  async createAggregateRate (newRate: NewAggregateRate): Promise<AggregateRate> {
+    newRate.inputs = []
+    return this.model.AggregateRate.create(newRate)
+  }
+
+  async getCurrentRate (from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
+    return this.model.ground.querySingle(currentRateSql, {
+      from: from,
+      to: to
+    })
+  }
+
+  async createConversion<ConversionSource> (conversion: NewGenericConversion) {
+    return this.model.Conversion.create(conversion)
+  }
+
+  async convert (inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
+    const rate = await this.getRateAtTime(time, from, to)
+    if (!rate) {
+      throw new Error('There is no rate data to convert from ' + from + ' to ' + to + '.')
+    }
+
+    const newValue = inputValue.times(rate.value)
+    return this.createConversion({
+      context: context,
+      input: inputValue,
+      rate: rate.id,
+      rateValue: rate.value,
+      output: newValue
+    })
+  }
+
+  private async gatherRates (to: CurrencyId, from: CurrencyId, sources: RateSource[]): Promise<InputRate[]> {
     const newRates: NewInputRate[] = []
     for (let source of sources) {
       try {
@@ -56,9 +124,8 @@ export class CurrencyManager<ConversionSource = any> {
           value: output.value,
           volume: output.volume
         })
-      }
-      catch (error) {
-        console.error("Error gathering rate from", source.name, to, '->', from, error)
+      } catch (error) {
+        console.error('Error gathering rate from', source.name, to, '->', from, error)
       }
     }
 
@@ -67,71 +134,5 @@ export class CurrencyManager<ConversionSource = any> {
       result.push(await this.createInputRate(rate))
     }
     return result
-  }
-
-  async updateFlow(flow: RateFlow): Promise<AggregateRate | undefined> {
-    const rates = await this.gatherRates(flow.to, flow.from, flow.sources)
-    const result = await flow.aggregator(rates)
-    if (result.success) {
-      const newRate = {
-        value: result.value,
-        from: flow.from,
-        to: flow.to,
-        inputs: rates.map(r => r.source)
-      }
-      return this.createAggregateRate(newRate)
-    }
-    else {
-      console.error('Error processing user-info')
-    }
-  }
-
-  async updateAll() {
-    for (let flow of this.flows) {
-      await this.updateFlow(flow)
-    }
-  }
-
-  async getRateAtTime(time: Date, from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
-    return await this.model.ground.querySingle(rateAtTimeSql, {
-      time: time.toISOString(),
-      from: from,
-      to: to,
-    })
-  }
-
-  async createInputRate(newRate: NewInputRate): Promise<InputRate> {
-    return await this.model.InputRate.create(newRate)
-  }
-
-  async createAggregateRate(newRate: NewAggregateRate): Promise<AggregateRate> {
-    newRate.inputs = []
-    return await this.model.AggregateRate.create(newRate)
-  }
-
-  async getCurrentRate(from: CurrencyId, to: CurrencyId): Promise<Rate | undefined> {
-    return await this.model.ground.querySingle(currentRateSql, {
-      from: from,
-      to: to,
-    })
-  }
-
-  async createConversion<ConversionSource>(conversion: NewGenericConversion) {
-    return await this.model.Conversion.create(conversion)
-  }
-
-  async convert(inputValue: BigNumber, from: CurrencyId, to: CurrencyId, time: Date, context: string): Promise<GenericConversion> {
-    const rate = await this.getRateAtTime(time, from, to)
-    if (!rate)
-      throw new Error("There is no rate data to convert from " + from + " to " + to + ".")
-
-    const newValue = inputValue.times(rate.value)
-    return await this.createConversion({
-      context: context,
-      input: inputValue,
-      rate: rate.id,
-      rateValue: rate.value,
-      output: newValue,
-    })
   }
 }

@@ -37,71 +37,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 function createRateSql(filter) {
     if (filter === void 0) { filter = ''; }
-    console.error("Should not be used in production, filter needs to be fixed");
-    return "\n    SELECT * FROM aggregate_rates \n    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
+    console.error('Should not be used in production, filter needs to be fixed');
+    return "\n    SELECT * FROM aggregate_rates\n    WHERE aggregate_rates.from = :from AND aggregate_rates.to = :to " + filter + "\n    ORDER BY created DESC LIMIT 1\n    ";
 }
 var rateAtTimeSql = createRateSql('AND created <= :time');
 var currentRateSql = createRateSql();
-var CurrencyManager = (function () {
+var CurrencyManager = /** @class */ (function () {
     function CurrencyManager(flows, model) {
         this.flows = flows;
         this.model = model;
     }
     CurrencyManager.prototype.getFlow = function (from, to) {
-        return this.flows.filter(function (f) { return f.to == to && f.from == from; })[0];
-    };
-    CurrencyManager.prototype.gatherRates = function (to, from, sources) {
-        return __awaiter(this, void 0, void 0, function () {
-            var newRates, _i, sources_1, source, output, error_1, result, _a, newRates_1, rate, _b, _c;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0:
-                        newRates = [];
-                        _i = 0, sources_1 = sources;
-                        _d.label = 1;
-                    case 1:
-                        if (!(_i < sources_1.length)) return [3 /*break*/, 6];
-                        source = sources_1[_i];
-                        _d.label = 2;
-                    case 2:
-                        _d.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, source.getRate()];
-                    case 3:
-                        output = _d.sent();
-                        newRates.push({
-                            to: to,
-                            from: from,
-                            source: source.id,
-                            value: output.value,
-                            volume: output.volume
-                        });
-                        return [3 /*break*/, 5];
-                    case 4:
-                        error_1 = _d.sent();
-                        console.error("Error gathering rate from", source.name, to, '->', from, error_1);
-                        return [3 /*break*/, 5];
-                    case 5:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 6:
-                        result = [];
-                        _a = 0, newRates_1 = newRates;
-                        _d.label = 7;
-                    case 7:
-                        if (!(_a < newRates_1.length)) return [3 /*break*/, 10];
-                        rate = newRates_1[_a];
-                        _c = (_b = result).push;
-                        return [4 /*yield*/, this.createInputRate(rate)];
-                    case 8:
-                        _c.apply(_b, [_d.sent()]);
-                        _d.label = 9;
-                    case 9:
-                        _a++;
-                        return [3 /*break*/, 7];
-                    case 10: return [2 /*return*/, result];
-                }
-            });
-        });
+        return this.flows.filter(function (f) { return f.to === to && f.from === from; })[0];
     };
     CurrencyManager.prototype.updateFlow = function (flow) {
         return __awaiter(this, void 0, void 0, function () {
@@ -117,6 +64,7 @@ var CurrencyManager = (function () {
                         if (result.success) {
                             newRate = {
                                 value: result.value,
+                                volume: result.volume,
                                 from: flow.from,
                                 to: flow.to,
                                 inputs: rates.map(function (r) { return r.source; })
@@ -157,59 +105,43 @@ var CurrencyManager = (function () {
     CurrencyManager.prototype.getRateAtTime = function (time, from, to) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.ground.querySingle(rateAtTimeSql, {
-                            time: time.toISOString(),
-                            from: from,
-                            to: to,
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                return [2 /*return*/, this.model.ground.querySingle(rateAtTimeSql, {
+                        time: time.toISOString(),
+                        from: from,
+                        to: to
+                    })];
             });
         });
     };
     CurrencyManager.prototype.createInputRate = function (newRate) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.InputRate.create(newRate)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                return [2 /*return*/, this.model.InputRate.create(newRate)];
             });
         });
     };
     CurrencyManager.prototype.createAggregateRate = function (newRate) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        newRate.inputs = [];
-                        return [4 /*yield*/, this.model.AggregateRate.create(newRate)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                newRate.inputs = [];
+                return [2 /*return*/, this.model.AggregateRate.create(newRate)];
             });
         });
     };
     CurrencyManager.prototype.getCurrentRate = function (from, to) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.ground.querySingle(currentRateSql, {
-                            from: from,
-                            to: to,
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                return [2 /*return*/, this.model.ground.querySingle(currentRateSql, {
+                        from: from,
+                        to: to
+                    })];
             });
         });
     };
     CurrencyManager.prototype.createConversion = function (conversion) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.Conversion.create(conversion)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                return [2 /*return*/, this.model.Conversion.create(conversion)];
             });
         });
     };
@@ -221,17 +153,70 @@ var CurrencyManager = (function () {
                     case 0: return [4 /*yield*/, this.getRateAtTime(time, from, to)];
                     case 1:
                         rate = _a.sent();
-                        if (!rate)
-                            throw new Error("There is no rate data to convert from " + from + " to " + to + ".");
+                        if (!rate) {
+                            throw new Error('There is no rate data to convert from ' + from + ' to ' + to + '.');
+                        }
                         newValue = inputValue.times(rate.value);
-                        return [4 /*yield*/, this.createConversion({
+                        return [2 /*return*/, this.createConversion({
                                 context: context,
                                 input: inputValue,
                                 rate: rate.id,
                                 rateValue: rate.value,
-                                output: newValue,
+                                output: newValue
                             })];
-                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    CurrencyManager.prototype.gatherRates = function (to, from, sources) {
+        return __awaiter(this, void 0, void 0, function () {
+            var newRates, _i, sources_1, source, output, error_1, result, _a, newRates_1, rate, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        newRates = [];
+                        _i = 0, sources_1 = sources;
+                        _d.label = 1;
+                    case 1:
+                        if (!(_i < sources_1.length)) return [3 /*break*/, 6];
+                        source = sources_1[_i];
+                        _d.label = 2;
+                    case 2:
+                        _d.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, source.getRate()];
+                    case 3:
+                        output = _d.sent();
+                        newRates.push({
+                            to: to,
+                            from: from,
+                            source: source.id,
+                            value: output.value,
+                            volume: output.volume
+                        });
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_1 = _d.sent();
+                        console.error('Error gathering rate from', source.name, to, '->', from, error_1);
+                        return [3 /*break*/, 5];
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 6:
+                        result = [];
+                        _a = 0, newRates_1 = newRates;
+                        _d.label = 7;
+                    case 7:
+                        if (!(_a < newRates_1.length)) return [3 /*break*/, 10];
+                        rate = newRates_1[_a];
+                        _c = (_b = result).push;
+                        return [4 /*yield*/, this.createInputRate(rate)];
+                    case 8:
+                        _c.apply(_b, [_d.sent()]);
+                        _d.label = 9;
+                    case 9:
+                        _a++;
+                        return [3 /*break*/, 7];
+                    case 10: return [2 /*return*/, result];
                 }
             });
         });

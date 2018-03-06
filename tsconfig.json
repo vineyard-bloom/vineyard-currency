@@ -6,8 +6,12 @@
     "sourceMap": true,
     "declaration": true,
     "newLine": "lf",
+    "strictPropertyInitialization": false,
     "lib": [
       "es2015"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

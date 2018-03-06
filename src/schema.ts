@@ -7,6 +7,6 @@ export interface FullSchema {
   Transaction: Trellis
 }
 
-export function getFullCurrencySchema(): FullSchema {
+export function getFullCurrencySchema (): FullSchema {
   return require('./schema.json')
 }
