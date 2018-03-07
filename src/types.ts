@@ -1,5 +1,4 @@
 import { BigNumber } from 'bignumber.js'
-import { Currency } from 'vineyard-blockchain'
 import { Collection, Modeler } from 'vineyard-ground'
 
 export type Id = string

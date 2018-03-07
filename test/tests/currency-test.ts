@@ -3,7 +3,6 @@ import { getFullCurrencySchema } from '../../src/schema'
 require('source-map-support').install()
 import { assert, expect } from 'chai'
 import { DevModeler, SequelizeClient, DatabaseClient } from 'vineyard-ground'
-import { getFullBlockchainSchema } from 'vineyard-blockchain'
 import { BigNumber } from 'bignumber.js'
 import { CurrencyModel, Rate, CurrencyManager, RateFlow } from '../../src'
 
@@ -26,7 +25,7 @@ enum RateSourceType {
 }
 
 async function createGeneralModel (client: DatabaseClient) {
-  const modeler = new DevModeler(Object.assign({}, getFullCurrencySchema(), getFullBlockchainSchema(), additionalSchema), client)
+  const modeler = new DevModeler(Object.assign({}, getFullCurrencySchema(), additionalSchema), client)
   const model: any = modeler.collections
   model.ground = modeler
 
